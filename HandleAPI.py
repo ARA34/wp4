@@ -10,7 +10,7 @@ RESP_OK = "ok"
 RESP_ERROR = "error"
 
 
-# available_leagues = rq.get("https://api.sportmonks.com/v3/football/leagues?api_token="+API_TOKEN_1)
+# available_leagues = rq.get("https://api.sportmonks.com/v3/football/leagues?api_token="+API_TOKEN_1) # this is working
 # available_leagues = available_leagues.json()["data"]
 
 response = namedtuple("response", ["type", "data"])
