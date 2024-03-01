@@ -37,25 +37,27 @@ def get_data(infos: list) -> str:
     """
     url = format_url(infos)
     try:
-        print(url)
         data = rq.get(url) # json_string
         data = data.json() # response type is Response, converts to dict
-        resp = response(RESP_OK, data)
+        resp = response(RESP_OK, data["data"])
     except Exception:
         resp = response(RESP_ERROR, data)
     return resp
 
 
-def parse_league_data(leagues_data: list):
+def get_leagues():
     """
     Parse and filter leagues_data list from server
     """
-    leagues_names = list(map(lambda d: d["name"], leagues_data)) # get leauge names
-    leagues_names = list(filter(lambda d: not "play-offs" in d.lower(), leagues_data)) # filter out play-offs
+    leagues_data = get_data(["leagues"]).data
+    leagues_names = list(map(lambda d: d["name"], leagues_data)) # get league names
+    leagues_names = list(filter(lambda d: not "play-offs" in d.lower(), leagues_names)) # filter out play-offs
     return leagues_names
 
 
-print(get_data(["leagues"]))
+# l_data = get_data(["leagues"]).data
+# pl_data = parse_league_data(l_data)
+# print(get_leagues())
 
 
 
