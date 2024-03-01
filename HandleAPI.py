@@ -15,8 +15,22 @@ RESP_ERROR = "error"
 
 response = namedtuple("response", ["type", "data"])
 
-def extract_json(json_str: str) -> response:
+class APIHandlerException(Exception):
+    """
+    Custom class for exceptions in the HandleAPI module.
+    """
     pass
+
+def extract_json(json_obj: dict, type:str) -> response:
+    """
+    Converts a json objecti(dict) into a namedtuple to be parsed by extrenal functions.
+    """
+    try:
+        resp = response(type, json_obj["data"])
+        return resp
+    except Exception as ex:
+        raise APIHandlerException("Something went wrong when extracting json", ex)
+
 
 
 def format_url(infos: list) -> str:
@@ -39,9 +53,9 @@ def get_data(infos: list) -> str:
     try:
         data = rq.get(url) # json_string
         data = data.json() # response type is Response, converts to dict
-        resp = response(RESP_OK, data["data"])
+        resp = extract_json(data, RESP_OK)
     except Exception:
-        resp = response(RESP_ERROR, data)
+        resp = extract_json(data, RESP_ERROR)
     return resp
 
 
