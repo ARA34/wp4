@@ -1,5 +1,6 @@
 import HandleAPI as hapi
 import HandleFiles as hfile
+import VisualizeData as plot
 
 
 def run_ui():
@@ -12,8 +13,14 @@ def run_ui():
         fm_obj.set_apikey("0356663ee33a0a5d27428b1f63011652")
         fm_obj.load_data()
         # print(fm_obj.data)
-        print(fm_obj.names_list)
-        print(fm_obj.play_list)
+
+        VizualizeData = plot.VisualizeData()
+        VizualizeData.set_data(fm_obj.play_list)
+        VizualizeData.set_labels(fm_obj.names_list)
+        VizualizeData.create_pie()
+
+        # print(fm_obj.names_list)
+        # print(fm_obj.play_list)
 
         user_in = input("Enter the name of an artist ('Q' to exit): ")
 

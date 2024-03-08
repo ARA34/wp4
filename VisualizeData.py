@@ -2,6 +2,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import HandleFiles as hfile
 
 # Z = np.array([35,24,15])
 # mylabels = ["apples", "banana", "orange"]
@@ -23,13 +24,19 @@ class VisualizeData():
         self.labels = labels
     
     def create_pie(self):
-        data = np.array(self.data)
-        pie_labels = self.labels
-        plt.pie(data, labels=pie_labels)
-        plt.show() # somehow store pie chart as well
+        try:
+            data = np.array(self.data)
+            pie_labels = self.labels
+
+            plt.pie(data, labels=pie_labels, autopct=f"%1.1f%%")
+            title = input("Enter a title: ")
+            plt.savefig(title)
+            plt.show() # somehow store pie chart as well
+        except Exception as ex:
+            raise DataVisualizeError("Data not visualized: ", ex)
 
 
-new_viz = VisualizeData()
-new_viz.set_data([100,200,300,200,200,100])
-new_viz.set_labels(["1","2","3","4","5","6"])
-new_viz.create_pie()
+# new_viz = VisualizeData()
+# new_viz.set_data([100,200,300,200,200,100])
+# new_viz.set_labels(["1","2","3","4","5","6"])
+# new_viz.create_pie()
