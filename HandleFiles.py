@@ -1,8 +1,11 @@
 from pathlib import Path
 
 CURR_DIR = Path(".").resolve()
+
+
 class FileCreationError(Exception):
     pass
+
 
 def create_path(file_name:str):
     """
@@ -16,4 +19,3 @@ def create_path(file_name:str):
             file_path.touch()
     except Exception as ex:
         raise FileCreationError("There was an error creating the file: ", ex)
-    
