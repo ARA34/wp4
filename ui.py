@@ -1,66 +1,19 @@
-import sys, time
-import HandleAPI as h_api
-import HandleFiles as h_file
-
-
-def print_leagues():
-    """
-    Prints the Soccer leagues to choose from.
-    """
-    leagues = h_api.get_leagues()
-    print("")
-    for l in leagues:
-        print(" - " + l)
-    print(" ")
+import HandleAPI as hapi
+import HandleFiles as hfile
 
 
 def run_ui():
-    print("Welcome to my WP4. Here you can see data visualizations of different soccer teams.")
-    print("Fetching leagues...")
-    # league_tups = print_leagues()[0]
-    # printable_leagues = print_leagues()[1]
+    print("Welcome to my WP4. Powered by LastFM")
 
-    # print(printable_leagues)
-    print_leagues()
+    user_in = input("Enter the name of an artist ('Q' to exit): ")
+    while user_in != "Q":
+        print(f"Cool, you selected: {user_in}")
+        fm_obj = hapi.LastFM(user_in)
+        fm_obj.set_apikey("0356663ee33a0a5d27428b1f63011652")
+        fm_obj.load_data()
+        # print(fm_obj.data)
+        print(fm_obj.names_list)
+        print(fm_obj.play_list)
 
-    league_input = input("What Socccer League do you want to analyze.\n" +
-                         "Select a name from the menu above." +
-                         "'Q' to exit:\n")
-
-    while league_input != "Q":
-        print(league_input)
-        if league_input == "Premiership":
-            league_id = 501
-        elif league_input == "Superliga":
-            league_id = 271
-        else:
-            print("incorrect league")
-        print(h_api.get_standings(league_id))
-        
-        
-        # Teams are found from league input
-        # print(len(league_tups))
-        # print(f"You have chosen {league_tups[int(league_input) - 1][1]}. Showing stats now.")
-        # some functionality that I haven't implemented yet
-        #print(h_api.get_data("teams").data)
-
-
-        # TODO implement showing stats here
-
-        # load data visualization
-
-        # save data visulization
-        # file_name = input("Enter a filename: ")
-        # h_file.create_path(file_name)
-        # store the loaded data visualziation
-
-
-
-
-
-
-        league_input = input("What Socccer League do you want to analyze.\n" +
-                         "Select a number from the dropdown Menu." +
-                         "'Q' to exit:\n")
-
+        user_in = input("Enter the name of an artist ('Q' to exit): ")
 

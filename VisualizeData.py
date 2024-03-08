@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-Z = np.array([35,24,15])
-mylabels = ["apples", "banana", "orange"]
-plt.pie(Z, labels=mylabels)
-plt.show()
+# Z = np.array([35,24,15])
+# mylabels = ["apples", "banana", "orange"]
+# plt.pie(Z, labels=mylabels)
+# plt.show()
 
 class DataVisualizeError(Exception):
     pass
@@ -23,8 +23,13 @@ class VisualizeData():
         self.labels = labels
     
     def create_pie(self):
-        data = np.array(data)
+        data = np.array(self.data)
         pie_labels = self.labels
         plt.pie(data, labels=pie_labels)
         plt.show() # somehow store pie chart as well
 
+
+new_viz = VisualizeData()
+new_viz.set_data([100,200,300,200,200,100])
+new_viz.set_labels(["1","2","3","4","5","6"])
+new_viz.create_pie()

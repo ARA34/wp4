@@ -1,70 +1,40 @@
-import requests as rq
-from pandas import json_normalize
-from collections import namedtuple
 import urllib
-from urllib import request
 import json
+from urllib import request
+from urllib import error
+from abc import ABC
+from abc import abstractmethod
+from collections import namedtuple
+from functools import reduce
 
-# API_TOKEN_1 = "WGLn6CtLttBnJ0kGPZjjnY9l4UvnwUPhFsIh1KTAk5yJ5JGJ1Mc8CzsNX819"
-# BASE_URL = "https://api.sportmonks.com/v3/football/" # can also add fixtures
-# END_URL = f"?api_token={API_TOKEN_1}"
+url = "https://ws.audioscrobbler.com/2.0"
 
-RESP_OK = "ok"
-RESP_ERROR = "error"
-
-
-
-
-# available_leagues = rq.get("https://api.sportmonks.com/v3/football/leagues?api_token="+API_TOKEN_1)
-# this is working
-# available_leagues = available_leagues.json()["data"]
-
-response = namedtuple("response", ["type", "data"])
+API_KEY_2 = "0356663ee33a0a5d27428b1f63011652"
 
 
-class APIHandlerException(Exception):
-    """
-    Custom class for exceptions in the HandleAPI module.
-    """
+class LastFMAPIError(Exception):
     pass
 
-class last_FM():
-    def __init__(self):
-        self.url = None
+
+lastFMTuple = namedtuple("LastFMTuple", ["data", "names_list", "play_list"])
+
+
+class LastFM():
+    def __init__(self, artist):
+        self.api_key = None
+        self.artist = artist
         self.data = None
-        self.apikey = None
+        self.url = None
+        self.baseurl = None
 
-    def set_url(self, url: str) -> None:
-        self.url = url
+        self.total_songs = None
+        self.total_plays = None
 
-    def set_api_key(self, apikey: str) -> None:
-        self.apikey = apikey
-
-    def get_data(self, url: str) -> None:
-        """
-        Requests and gets data from API server.
-        """
-        try:
-            data = rq.get(url) # json_string
-            data = data.json() # response type is Response, converts to dict
-            resp = self.extract_json(RESP_OK, data) # this is a tuple
-        except Exception:
-            print("error")
-            resp = self.extract_json(RESP_ERROR, data)
-        self.data = resp.data 
+        self.names_list = None
+        self.play_list = None
 
 
-    def extract_json(self, type: str, json_obj: dict) -> response:
-        """
-        Converts a json objecti(dict) into a namedtuple to be parsed by extrenal functions.
-        """
-        try:
-            resp = response(type, json_obj)
-            return resp
-        except Exception as ex:
-            raise APIHandlerException("Something went wrong when extracting json", ex)
-        
-    def _download_url(self, url: str) -> None:
+    def _download_url(self, url: str) -> dict:
         """
         Requests and returns response from API.
         """
@@ -74,31 +44,67 @@ class last_FM():
             resp = urllib.request.urlopen(url)
             json_results = resp.read()
             resp_obj = json.loads(json_results)
-            parsed_response = self.extract_json(RESP_OK, resp_obj)
-            self.data = parsed_response.data
         except urllib.error.HTTPError as e:
             print("Failed to download contents of URL")
             print("Status code: {}".format(e.code))
         finally:
             if resp is not None:
                 resp.close()
-
-
-def get_leagues():
-    """
-    Parse and filter leagues_data list from server
-    """
-    api_obj_leagues = sportmonks_API()
-    api_obj_leagues.set_api_key(API_TOKEN_1)
-    url = f"https://api.sportmonks.com/v3/football/leagues?api_token={api_obj_leagues.apikey}"
-    api_obj_leagues._download_url(url)
+        return resp_obj
     
+    def set_apikey(self, apikey: str) -> None:
+        """
+        inits given apikey
+        """
+        self.api_key = apikey
 
-    leagues_data = api_obj_leagues.data["data"]
-    leagues_names = list(map(lambda d: d["name"], leagues_data)) # get league names
-    leagues_names = list(filter(lambda d: not "play-offs" in d.lower(), leagues_names)) # filter out play-offs
-    return leagues_names
-    
+    def load_data(self) -> None:
+        """
+        Gets data from API and stores it in
+        data attribute as namedtuple
+        """
+        url = f"http://ws.audioscrobbler.com/2.0/?method=artist." + \
+              f"gettoptracks&artist={self.artist}" + \
+              f"&api_key={self.api_key}&format=json"
+        try:
+            data = self._download_url(url)
+            self.data = data
+            lastFM_tup = self.sort_FM_data()
 
+            self.data = lastFM_tup.data
+            self.names_list = lastFM_tup.names_list
+            self.play_list = lastFM_tup.play_list
+        except Exception as ex:
+            raise LastFMAPIError(f"LastFM data not loaded: {ex}")
 
+    def sort_FM_data(self) -> lastFMTuple:
+        """
+        Takes the data and sorts it into a tuple to be parsed in load_data
+        """
+        response = self.get_tracks()
+        data = response[0]
+        names_list = response[1]
+        play_list = response[2]
+        fm_tuple = lastFMTuple(data, names_list, play_list)
+        return fm_tuple
 
+    def get_tracks(self) -> tuple:
+        """
+        Returns a tuple list of track names and their respective playcounts
+        """
+        data = self.data["toptracks"]["track"]
+        try:
+            song_entries = list(filter(lambda d:
+                                       ("name" and "playcount")
+                                       in d.keys(), data))
+            song_names = list(map(lambda d: d["name"], song_entries))
+            self.total_songs = len(song_names)
+            playcounts = list(map(lambda d: int(d["playcount"]), song_entries))
+            self.total_plays = reduce(lambda x, y: int(x) + int(y), playcounts)
+            songs_counts = list(map(lambda x, y:
+                                    (x, y),
+                                    song_names,
+                                    playcounts))
+        except Exception as ex:
+            raise LastFMAPIError(f"get_top_track unsuccesful: {ex}")
+        return songs_counts, song_names, playcounts
