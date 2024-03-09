@@ -16,6 +16,7 @@ class VisualizeData():
     def __init__(self):
         self.data = None # list of numeric values
         self.labels = None # list of str values
+        self.file_name = None
 
     def set_data(self, data: list) -> None:
         self.data = data
@@ -30,8 +31,8 @@ class VisualizeData():
 
             plt.pie(data, labels=pie_labels, autopct=f"%1.1f%%")
             title = input("Enter a title: ")
+            self.file_name = title
             plt.savefig(title)
-            plt.show() # somehow store pie chart as well
         except Exception as ex:
             raise DataVisualizeError("Data not visualized: ", ex)
 

@@ -19,6 +19,10 @@ def run_ui():
         VizualizeData.set_labels(fm_obj.names_list)
         VizualizeData.create_pie()
 
+        hfile.create_png_folder()
+        hfile.sort_file(VizualizeData.file_name)
+
+
         # print(fm_obj.names_list)
         # print(fm_obj.play_list)
 
