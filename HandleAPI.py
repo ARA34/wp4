@@ -1,18 +1,20 @@
 import urllib
 import json
-from urllib import request
-from urllib import error
 from abc import ABC
 from abc import abstractmethod
 from collections import namedtuple
 from functools import reduce
 
-url = "https://ws.audioscrobbler.com/2.0"
 
+url = "https://ws.audioscrobbler.com/2.0"
 API_KEY_2 = "0356663ee33a0a5d27428b1f63011652"
 
 
 class LastFMAPIError(Exception):
+    """
+    Custom Exception class to catch any potential
+    exceptions in this module.
+    """
     pass
 
 
@@ -26,13 +28,10 @@ class LastFM():
         self.data = None
         self.url = None
         self.baseurl = None
-
         self.total_songs = None
         self.total_plays = None
-
         self.names_list = None
         self.play_list = None
-
 
     def _download_url(self, url: str) -> dict:
         """

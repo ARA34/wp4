@@ -1,5 +1,5 @@
 from pathlib import Path
-import matplotlib as plt
+
 
 current_path = Path(".").resolve()
 
@@ -7,7 +7,11 @@ current_path = Path(".").resolve()
 class FileCreationError(Exception):
     pass
 
+
 def create_png_folder():
+    """
+    Creates a folder named 'data_images' to store data visualizations.
+    """
     try:
         folder_path = str(current_path) + "/data_images"
         folder_path = Path(folder_path)
@@ -17,7 +21,12 @@ def create_png_folder():
     except Exception as ex:
         raise FileCreationError("Folder Error: ", ex)
 
+
 def sort_file(file_name: str):
+    """
+    Redirects an already created file to the data_image folder.
+    Keep in mind the create_png_folder must be ran first.
+    """
     try:
         file_path = str(current_path) + "/" + file_name + ".png"
         file_path = Path(file_path)
@@ -28,5 +37,4 @@ def sort_file(file_name: str):
     except Exception as ex:
         raise FileCreationError("File I/O problem: ", ex)
 
-    # 
 

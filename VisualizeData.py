@@ -2,15 +2,15 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import HandleFiles as hfile
 
-# Z = np.array([35,24,15])
-# mylabels = ["apples", "banana", "orange"]
-# plt.pie(Z, labels=mylabels)
-# plt.show()
 
 class DataVisualizeError(Exception):
+    """
+    Custom Exception class to catch any potential
+    exceptions in this module
+    """
     pass
+
 
 class VisualizeData():
     def __init__(self):
