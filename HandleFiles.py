@@ -33,8 +33,7 @@ def sort_file(file_name: str):
 
         target_path = current_path / Path("data_images") / file_path.name
         file_path.rename(target_path)
-        print(f"Your data visualizetion file can be found at: {str(target_path)}")
+        print(f"Your data visualizetion file can be found at:" +
+              f" {str(target_path)}")
     except Exception as ex:
         raise FileCreationError("File I/O problem: ", ex)
-
-

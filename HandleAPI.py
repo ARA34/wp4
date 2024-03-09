@@ -50,7 +50,7 @@ class LastFM():
             if resp is not None:
                 resp.close()
         return resp_obj
-    
+
     def set_apikey(self, apikey: str) -> None:
         """
         inits given apikey

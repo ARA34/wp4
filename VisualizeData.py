@@ -14,8 +14,8 @@ class DataVisualizeError(Exception):
 
 class VisualizeData():
     def __init__(self):
-        self.data = None # list of numeric values
-        self.labels = None # list of str values
+        self.data = None
+        self.labels = None
         self.file_name = None
 
     def set_data(self, data: list) -> None:
@@ -23,7 +23,7 @@ class VisualizeData():
 
     def set_labels(self, labels: list) -> None:
         self.labels = labels
-    
+
     def create_pie(self):
         try:
             data = np.array(self.data)
@@ -35,9 +35,3 @@ class VisualizeData():
             plt.savefig(title)
         except Exception as ex:
             raise DataVisualizeError("Data not visualized: ", ex)
-
-
-# new_viz = VisualizeData()
-# new_viz.set_data([100,200,300,200,200,100])
-# new_viz.set_labels(["1","2","3","4","5","6"])
-# new_viz.create_pie()

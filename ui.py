@@ -22,4 +22,3 @@ def run_ui():
         hfile.create_png_folder()
         hfile.sort_file(VizualizeData.file_name)
         user_in = input("Enter the name of an artist ('Q' to exit): ")
-
